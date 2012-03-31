@@ -1,7 +1,7 @@
 #!/bin/bash
 function doIt() {
   for FILE in `ls dots`;do
-    echo mv "dots/$FILE" "~/.$FILE"
+    cp -af "./dots/$FILE" "$HOME/.$FILE"
   done
 }
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
