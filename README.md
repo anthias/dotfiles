@@ -1,4 +1,4 @@
-# Anthia’s dotfiles
+# Anthias' dotfiles
 
 Forked from https://github.com/mathiasbynens/dotfiles
 
