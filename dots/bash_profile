@@ -40,3 +40,67 @@ export PATH=/Applications/wkhtmltopdf.app/Contents/MacOS/:$PATH
 if [ -f `brew --prefix`/etc/bash_completion ]; then
   . `brew --prefix`/etc/bash_completion
 fi
+
+
+# Use bundler for commands, if Gemfile is present
+bundle_exec_if_possible() {
+  ensure_gem bundler
+  if find_in_cwd_or_parent Gemfile > /dev/null; then
+    bundle exec "$@"
+  else
+    /usr/bin/env "$@"
+  fi
+}
+alias be="bundle_exec_if_possible"
+
+# Alias most rails commands to use the bundle exec wrapper
+for c in cap cucumber rspec spec spork thin unicorn unicorn_rails mongrel_rails; do
+  alias $c="bundle_exec_if_possible $c"
+done
+
+# Run rails commands on either 2.x and 3.x
+rails_cmd(){
+  if [ -e ./script/rails ]; then ./script/rails $@
+  elif [ -e ./script/$1 ]; then ./script/$@
+  else echo "== Command not found. (Are you sure this is a rails 2.x or 3.x application?)"
+  fi
+}
+alias   rs="rails_cmd server"
+alias  rsd="rails_cmd server -u"
+alias  rst="rails_cmd server thin"
+alias rstd="rails_cmd server thin -u"
+alias   rc="rails_cmd console"
+alias   rg="rails_cmd generate"
+
+
+# Tab completion without trailing space, for adding line number filtering. e.g. :23
+complete -o nospace -f rspec
+complete -o nospace -f cucumber
+
+
+# Capistrano aliases for each stage
+for stage in dev preview staging live; do
+  char=`echo $stage | head -c 1`
+  alias  c$char\d="cap $stage deploy"
+  alias c$char\dm="cap $stage deploy:migrations"
+  alias  c$char\r="cap $stage revisions"
+  # Push, then deploy
+  alias pc$char\d="git push; cap  $stage deploy"
+done
+alias cdp='cap deploy'
+
+# RAILS_ENV aliases
+alias  redev="RAILS_ENV=development"
+alias retest="RAILS_ENV=test"
+alias reprod="RAILS_ENV=production"
+
+
+# Rake aliases
+alias    r="rake"
+# Run all rake commands with bundle exec, and --trace flag
+alias rake="bundle_exec_if_possible rake "
+alias rdbc="rake db:create"
+alias rdbd="rake db:drop"
+alias rdbm="rake db:migrate"
+alias  rsp="rake spec"
+alias  rts="rake test"
