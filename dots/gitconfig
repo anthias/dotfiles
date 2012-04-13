@@ -62,8 +62,6 @@ email = jeff.blasius@gmail.com
 [format]
   pretty=format:%C(yellow)%h%Creset -%C(red)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset
 [merge]
-	# Include summaries of merged commits in newly created merge commit messages
-	log = true
   tool = vimdiff
 
 # Use `origin` as the default remote on the `master` branch in all cases
